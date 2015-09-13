@@ -52,6 +52,10 @@ func main() {
 	licenseIdMap := licenses.GetIdMap()
 
 	mux.HandleFunc("/licenses/", func(w http.ResponseWriter, req *http.Request) {
+		if req.URL.Path != "/licenses/" {
+			writeError(w, "No such page", 404)
+			return
+		}
 		writeJSON(w, licenseIds, 200)
 	})
 
@@ -63,6 +67,10 @@ func main() {
 			return
 		}
 		writeError(w, "Unknown license", 404)
+	})
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		writeError(w, "No such page", 404)
 	})
 
 	http.ListenAndServe(":8000", mux)
