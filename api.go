@@ -15,4 +15,42 @@
 
 package main
 
+import (
+	"encoding/json"
+	"net/http"
+)
+
+func writeJSON(w http.ResponseWriter, data interface{}, code int) error {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(code)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func writeError(w http.ResponseWriter, message string, code int) error {
+	return writeJSON(w, map[string][]map[string]string{
+		"errors": []map[string]string{
+			map[string]string{"message": message},
+		},
+	}, code)
+}
+
+func main() {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/licenses/", func(w http.ResponseWriter, req *http.Request) {
+		response := "hi"
+		writeJSON(w, response, 200)
+	})
+
+	mux.HandleFunc("/license/", func(w http.ResponseWriter, req *http.Request) {
+		response := "hi"
+		writeJSON(w, response, 200)
+	})
+
+	http.ListenAndServe(":8000", mux)
+}
+
 // vim: foldmethod=marker
