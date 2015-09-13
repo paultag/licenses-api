@@ -46,17 +46,21 @@ func main() {
 		panic(err)
 	}
 
+	licenseIds := licenses.GetIds()
+	licenseIdMap := licenses.GetIdMap()
+
 	mux.HandleFunc("/licenses/", func(w http.ResponseWriter, req *http.Request) {
-		identifiers := []string{}
-		for _, license := range licenses {
-			identifiers = append(identifiers, license.Id)
-		}
-		writeJSON(w, identifiers, 200)
+		writeJSON(w, licenseIds, 200)
 	})
 
-	mux.HandleFunc("/license/", func(w http.ResponseWriter, req *http.Request) {
-		response := "hi"
-		writeJSON(w, response, 200)
+	licenseEndpoint := "/license/"
+	mux.HandleFunc(licenseEndpoint, func(w http.ResponseWriter, req *http.Request) {
+		path := req.URL.Path[len(licenseEndpoint):]
+		if license, ok := licenseIdMap[path]; ok {
+			writeJSON(w, license, 200)
+			return
+		}
+		writeError(w, "Unknown license", 404)
 	})
 
 	http.ListenAndServe(":8000", mux)

@@ -17,54 +17,76 @@ package license
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
 //
 type Identifier struct {
-	Identifier string
-	Scheme     string
+	Identifier string `json:"identifier"`
+	Scheme     string `json:"scheme"`
 }
 
 //
 type Link struct {
-	Note string
-	URL  string
+	Note string `json:"note"`
+	URL  string `json:"url"`
 }
 
 //
 type OtherName struct {
-	Name string
-	Note string
+	Name string `json:"name"`
+	Note string `json:"note"`
 }
 
 //
 type Text struct {
-	ContentType string
-	Name        string
-	URL         string
+	ContentType string `json:"content_type"`
+	Name        string `json:"name"`
+	URL         string `json:"url"`
 }
 
 //
 type License struct {
-	Id           string `json:"id"`
-	Identifiers  []Identifier
-	Links        []Link
-	Name         string
-	OtherNames   []OtherName
-	SupersededBy string
-	Tags         []string
-	Texts        []Text
+	Id           string       `json:"id"`
+	Identifiers  []Identifier `json:"identifiers"`
+	Links        []Link       `json:"links"`
+	Name         string       `json:"name"`
+	OtherNames   []OtherName  `json:"other_names"`
+	SupersededBy *string      `json:"superseded_by"`
+	Tags         []string     `json:"tags"`
+	Texts        []Text       `json:"text"`
 }
 
-func LoadLicensesFiles(path string) ([]License, error) {
-	ret := []License{}
+type Licenses []License
+
+func (licenses Licenses) GetIds() []string {
+	identifiers := []string{}
+	for _, license := range licenses {
+		identifiers = append(identifiers, license.Id)
+	}
+	return identifiers
+}
+
+func (licenses Licenses) GetIdMap() map[string]License {
+	ret := map[string]License{}
+	for _, license := range licenses {
+		ret[license.Id] = license
+		for _, identifier := range license.Identifiers {
+			ret[fmt.Sprintf("%s/%s", identifier.Scheme, identifier.Identifier)] = license
+		}
+	}
+	return ret
+}
+
+func LoadLicensesFiles(path string) (Licenses, error) {
+	ret := Licenses{}
 	fh, err := os.Open(path)
 	if err != nil {
-		return []License{}, err
+		return Licenses{}, err
 	}
 	if err := json.NewDecoder(fh).Decode(&ret); err != nil {
-		return []License{}, err
+		return Licenses{}, err
 	}
 	return ret, nil
 }
