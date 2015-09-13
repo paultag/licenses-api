@@ -29,14 +29,14 @@ type Identifier struct {
 
 //
 type Link struct {
-	Note string `json:"note"`
-	URL  string `json:"url"`
+	Note *string `json:"note"`
+	URL  string  `json:"url"`
 }
 
 //
 type OtherName struct {
-	Name string `json:"name"`
-	Note string `json:"note"`
+	Name string  `json:"name"`
+	Note *string `json:"note"`
 }
 
 //
@@ -58,8 +58,10 @@ type License struct {
 	Texts        []Text       `json:"text"`
 }
 
+//
 type Licenses []License
 
+//
 func (licenses Licenses) GetIds() []string {
 	identifiers := []string{}
 	for _, license := range licenses {
@@ -68,6 +70,7 @@ func (licenses Licenses) GetIds() []string {
 	return identifiers
 }
 
+//
 func (licenses Licenses) GetIdMap() map[string]License {
 	ret := map[string]License{}
 	for _, license := range licenses {
@@ -79,6 +82,7 @@ func (licenses Licenses) GetIdMap() map[string]License {
 	return ret
 }
 
+//
 func LoadLicensesFiles(path string) (Licenses, error) {
 	ret := Licenses{}
 	fh, err := os.Open(path)

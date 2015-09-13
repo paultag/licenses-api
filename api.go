@@ -22,6 +22,7 @@ import (
 	"opensource.org/api/license"
 )
 
+//
 func writeJSON(w http.ResponseWriter, data interface{}, code int) error {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(code)
@@ -31,6 +32,7 @@ func writeJSON(w http.ResponseWriter, data interface{}, code int) error {
 	return nil
 }
 
+//
 func writeError(w http.ResponseWriter, message string, code int) error {
 	return writeJSON(w, map[string][]map[string]string{
 		"errors": []map[string]string{
