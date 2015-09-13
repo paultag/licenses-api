@@ -18,6 +18,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 
 	"opensource.org/api/license"
 )
@@ -43,7 +44,7 @@ func writeError(w http.ResponseWriter, message string, code int) error {
 
 func main() {
 	mux := http.NewServeMux()
-	licenses, err := license.LoadLicensesFiles("/home/paultag/licenses.json")
+	licenses, err := license.LoadLicensesFiles(os.Args[1])
 	if err != nil {
 		panic(err)
 	}
