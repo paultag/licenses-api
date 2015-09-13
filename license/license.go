@@ -83,6 +83,17 @@ func (licenses Licenses) GetIdMap() map[string]License {
 }
 
 //
+func (licenses Licenses) GetTagMap() map[string][]License {
+	ret := map[string][]License{}
+	for _, license := range licenses {
+		for _, tag := range license.Tags {
+			ret[tag] = append(ret[tag], license)
+		}
+	}
+	return ret
+}
+
+//
 func LoadLicensesFiles(path string) (Licenses, error) {
 	ret := Licenses{}
 	fh, err := os.Open(path)

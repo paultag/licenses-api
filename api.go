@@ -50,13 +50,20 @@ func main() {
 
 	licenseIds := licenses.GetIds()
 	licenseIdMap := licenses.GetIdMap()
+	licenseTagMap := licenses.GetTagMap()
 
-	mux.HandleFunc("/licenses/", func(w http.ResponseWriter, req *http.Request) {
-		if req.URL.Path != "/licenses/" {
-			writeError(w, "No such page", 404)
+	licensesEndpoint := "/licenses/"
+	mux.HandleFunc(licensesEndpoint, func(w http.ResponseWriter, req *http.Request) {
+		if req.URL.Path == licensesEndpoint {
+			writeJSON(w, licenseIds, 200)
 			return
 		}
-		writeJSON(w, licenseIds, 200)
+		path := req.URL.Path[len(licensesEndpoint):]
+		if licenses, ok := licenseTagMap[path]; ok {
+			writeJSON(w, licenses, 200)
+			return
+		}
+		writeError(w, "Unknown license", 404)
 	})
 
 	licenseEndpoint := "/license/"
