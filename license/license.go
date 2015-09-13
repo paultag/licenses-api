@@ -15,6 +15,11 @@
 
 package license
 
+import (
+	"encoding/json"
+	"os"
+)
+
 //
 type Identifier struct {
 	Identifier string
@@ -42,7 +47,7 @@ type Text struct {
 
 //
 type License struct {
-	Id           string
+	Id           string `json:"id"`
 	Identifiers  []Identifier
 	Links        []Link
 	Name         string
@@ -50,6 +55,18 @@ type License struct {
 	SupersededBy string
 	Tags         []string
 	Texts        []Text
+}
+
+func LoadLicensesFiles(path string) ([]License, error) {
+	ret := []License{}
+	fh, err := os.Open(path)
+	if err != nil {
+		return []License{}, err
+	}
+	if err := json.NewDecoder(fh).Decode(&ret); err != nil {
+		return []License{}, err
+	}
+	return ret, nil
 }
 
 // vim: foldmethod=marker

@@ -18,6 +18,8 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+
+	"opensource.org/api/license"
 )
 
 func writeJSON(w http.ResponseWriter, data interface{}, code int) error {
@@ -39,10 +41,17 @@ func writeError(w http.ResponseWriter, message string, code int) error {
 
 func main() {
 	mux := http.NewServeMux()
+	licenses, err := license.LoadLicensesFiles("/home/paultag/licenses.json")
+	if err != nil {
+		panic(err)
+	}
 
 	mux.HandleFunc("/licenses/", func(w http.ResponseWriter, req *http.Request) {
-		response := "hi"
-		writeJSON(w, response, 200)
+		identifiers := []string{}
+		for _, license := range licenses {
+			identifiers = append(identifiers, license.Id)
+		}
+		writeJSON(w, identifiers, 200)
 	})
 
 	mux.HandleFunc("/license/", func(w http.ResponseWriter, req *http.Request) {
