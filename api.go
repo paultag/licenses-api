@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"os"
 
-	"opensource.org/api/license"
+	"github.com/opensourceorg/api/license"
 )
 
 //
