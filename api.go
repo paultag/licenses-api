@@ -64,7 +64,7 @@ func main() {
 			writeJSON(w, licenses, 200)
 			return
 		}
-		writeError(w, "Unknown license", 404)
+		writeError(w, "Unknown tag", 404)
 	})
 
 	licenseEndpoint := "/license/"
